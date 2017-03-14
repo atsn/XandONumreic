@@ -1,6 +1,8 @@
 package wit.cgd.xando.game;
 
 import wit.cgd.xando.game.ai.FirstSpacePlayer;
+import wit.cgd.xando.game.util.GameStats;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
@@ -54,29 +56,28 @@ public class WorldController extends InputAdapter
 			timeLeftGameOverDelay -= deltaTime;
 			if (timeLeftGameOverDelay < 0)
 			{
+				if (board.gameState == board.gameState.X_WON)
+				{
+					GameStats.instance.win();
+				}
+				else if (board.gameState == board.gameState.O_WON)
+				{
+					GameStats.instance.lose();
+				}
+				else
+				{
+					GameStats.instance.draw();
+				}
 				backToMenu();
 			}
 		}
 
 		if (board.gameState == Board.GameState.PLAYING)
 		{
+			
 			board.move();
 		}
-		else
-		{
-			if (timeLeftGameOverDelay < 0)
-			{
-				timeLeftGameOverDelay = 2;
-			}
-			else
-			{
-				timeLeftGameOverDelay -= deltaTime;
-			}
-			if (timeLeftGameOverDelay < 0)
-			{
-				board.start();
-			}
-		}
+	
 	}
 
 	@Override

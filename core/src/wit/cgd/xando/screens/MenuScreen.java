@@ -20,6 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import wit.cgd.xando.game.util.Constants;
+import wit.cgd.xando.game.util.GamePreferences;
+import wit.cgd.xando.game.util.GameStats;
 
 public class MenuScreen extends AbstractGameScreen
 {
@@ -43,9 +45,9 @@ public class MenuScreen extends AbstractGameScreen
 	private Button optionsSaveButton;
 	private Button optionsCancelButton;
 
-	private CheckBox firstPlayerHumanCheckBox;
-	private Label firstPlayerSkillLabel;
-	private Slider firstPlayerSkillSlider;
+	private CheckBox secondPlayerHumanCheckBox;
+	private Label secondPlayerSkillLabel;
+	private Slider secondPlayerSkillSlider;
 	private CheckBox secondPlayerHumanCheckBox;
 	private Label secondPlayerSkillLabel;
 	private Slider secondPlayerSkillSlider;
@@ -142,13 +144,13 @@ public class MenuScreen extends AbstractGameScreen
 		Table table = new Table();
 		table.left().top();
 
-		gameCountLabel = new Label("Number of games played: * ", skin);
+		gameCountLabel = new Label("Number of games played: " + GameStats.instance.gameCount, skin);
 		table.add(gameCountLabel).left();
 		table.row();
-		currentStreakLabel = new Label("Length of current winning streak: * ", skin);
+		currentStreakLabel = new Label("Length of current winning streak:" + GameStats.instance.currentStreak, skin);
 		table.add(currentStreakLabel).left();
 		table.row();
-		longestStreakLabel = new Label("Longest winning streak: * ", skin);
+		longestStreakLabel = new Label("Longest winning streak:" + GameStats.instance.longestStreak, skin);
 		table.add(longestStreakLabel).left();
 
 		table.row();
@@ -210,11 +212,167 @@ public class MenuScreen extends AbstractGameScreen
 
 	private Table buildOptionsWindowLayer()
 	{
-		Table table = new Table();
-		return table;
+
+		// create instance of window
+		optionsWindow = new Window("Options", defaultSkin);
+
+		// second (X) player settings
+		optionsWindow.add(new Label("second Player", defaultSkin)).colspan(3);
+		optionsWindow.row();
+		secondPlayerHumanCheckBox = new CheckBox("Human ?", defaultSkin);
+		optionsWindow.add(secondPlayerHumanCheckBox);
+		secondPlayerHumanCheckBox.addListener(new ChangeListener()
+		{
+			@Override
+			public void changed(ChangeEvent event, Actor actor)
+			{
+				CheckBox me = (CheckBox) actor;
+				if (me.isChecked())
+				{
+					secondPlayerSkillSlider.setDisabled(true);
+					secondPlayerSkillLabel.setColor(skin.getColor("gray"));
+				}
+				else
+				{
+					secondPlayerSkillSlider.setDisabled(false);
+					secondPlayerSkillLabel.setColor(skin.getColor("white"));
+				}
+			}
+		});
+		secondPlayerSkillLabel = new Label("Skill:", defaultSkin);
+		optionsWindow.add(secondPlayerSkillLabel);
+		secondPlayerSkillSlider = new Slider(0, 10, 1, false, defaultSkin);
+		optionsWindow.add(secondPlayerSkillSlider);
+		optionsWindow.row().padBottom(10);
+		// second (O) player settings
+
+		optionsWindow.add(new Label("Second Player", defaultSkin)).colspan(3);
+		optionsWindow.row();
+		secondPlayerHumanCheckBox = new CheckBox("Human ?", defaultSkin);
+		optionsWindow.add(secondPlayerHumanCheckBox);
+		secondPlayerHumanCheckBox.addListener(new ChangeListener()
+		{
+			@Override
+			public void changed(ChangeEvent event, Actor actor)
+			{
+				CheckBox me = (CheckBox) actor;
+				if (me.isChecked())
+				{
+					secondPlayerSkillSlider.setDisabled(true);
+					secondPlayerSkillLabel.setColor(skin.getColor("gray"));
+				}
+				else
+				{
+					secondPlayerSkillSlider.setDisabled(false);
+					secondPlayerSkillLabel.setColor(skin.getColor("white"));
+				}
+			}
+		});
+		secondPlayerSkillLabel = new Label("Skill:", defaultSkin);
+		optionsWindow.add(secondPlayerSkillLabel);
+		secondPlayerSkillSlider = new Slider(0, 10, 1, false, defaultSkin);
+		optionsWindow.add(secondPlayerSkillSlider);
+		optionsWindow.row().padBottom(10);
+		// sound settings
+
+		// sound settings
+		optionsWindow.add(new Label("Sound Effects", defaultSkin)).colspan(3);
+		optionsWindow.row();
+		soundCheckBox = new CheckBox("On", defaultSkin);
+		optionsWindow.add(soundCheckBox);
+		soundCheckBox.addListener(new ChangeListener()
+		{
+			@Override
+			public void changed(ChangeEvent event, Actor actor)
+			{
+				CheckBox me = (CheckBox) actor;
+				soundSlider.setDisabled(!me.isChecked());
+			}
+		});
+		soundSlider = new Slider(0.0f, 1.0f, 0.1f, false, defaultSkin);
+		optionsWindow.add(soundSlider).colspan(2);
+		optionsWindow.row().padBottom(10);
+		
+		// music settings
+		optionsWindow.add(new Label("music Effects", defaultSkin)).colspan(3);
+		optionsWindow.row();
+		musicCheckBox = new CheckBox("On", defaultSkin);
+		optionsWindow.add(musicCheckBox);
+		musicCheckBox.addListener(new ChangeListener()
+		{
+			@Override
+			public void changed(ChangeEvent event, Actor actor)
+			{
+				CheckBox me = (CheckBox) actor;
+				musicSlider.setDisabled(!me.isChecked());
+			}
+		});
+		musicSlider = new Slider(0.0f, 1.0f, 0.1f, false, defaultSkin);
+		optionsWindow.add(musicSlider).colspan(2);
+		optionsWindow.row().padBottom(10);
+
+		// cancel and save buttons
+		optionsCancelButton = new Button(skin, "cancel");
+		optionsWindow.add(optionsCancelButton).pad(Constants.BUTTON_PAD);
+		optionsCancelButton.addListener(new ChangeListener()
+		{
+			@Override
+			public void changed(ChangeEvent event, Actor actor)
+			{
+				onCancelClicked();
+			}
+		});
+		optionsSaveButton = new Button(skin, "save");
+		optionsWindow.add(optionsSaveButton).pad(Constants.BUTTON_PAD);
+		;
+		optionsSaveButton.addListener(new ChangeListener()
+		{
+			@Override
+			public void changed(ChangeEvent event, Actor actor)
+			{
+				onSaveClicked();
+			}
+		});
+
+		
+		   // tidy up window = resize and center
+        optionsWindow.setColor(1, 1, 1, 0.8f);
+        optionsWindow.setVisible(false);
+        if (debugEnabled) optionsWindow.debug();
+        optionsWindow.pack();
+        optionsWindow.setPosition((Constants.VIEWPORT_GUI_WIDTH - optionsWindow.getWidth())/2,
+                        (Constants.VIEWPORT_GUI_HEIGHT - optionsWindow.getHeight())/2);
+		// return constructed window
+		return optionsWindow;
+
 	}
 
 	private void onResetStatsClicked()
+	{
+		GameStats.instance.reset();
+		rebuildStage();
+	}
+
+	private void loadSettings()
+	{
+		GamePreferences prefs = GamePreferences.instance;
+		prefs.load();
+		// set each widget using values in prefs
+	}
+
+	private void saveSettings()
+	{
+		GamePreferences prefs = GamePreferences.instance;
+
+		// save each widget value into prefs
+
+		prefs.save();
+	}
+
+	private void onSaveClicked()
+	{}
+
+	private void onCancelClicked()
 	{}
 
 }

@@ -3,6 +3,10 @@ package wit.cgd.xando.game.util;
 public class Constants
 {
 
+	// Game setting (preferences + stats) files
+	public static final String STATS = "xando.stats";
+	public static final String PREFERENCES = "xando.prefs";
+
 	public static final String SKIN_UI = "images/ui.json";
 	public static final String TEXTURE_ATLAS_UI = "images/ui.atlas";
 
