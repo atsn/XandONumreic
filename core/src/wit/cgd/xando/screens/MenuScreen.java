@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import wit.cgd.xando.game.util.AudioManager;
 import wit.cgd.xando.game.util.Constants;
 import wit.cgd.xando.game.util.GamePreferences;
 import wit.cgd.xando.game.util.GameStats;
@@ -48,9 +49,9 @@ public class MenuScreen extends AbstractGameScreen
 	private CheckBox secondPlayerHumanCheckBox;
 	private Label secondPlayerSkillLabel;
 	private Slider secondPlayerSkillSlider;
-	private CheckBox secondPlayerHumanCheckBox;
-	private Label secondPlayerSkillLabel;
-	private Slider secondPlayerSkillSlider;
+	private CheckBox firstPlayerHumanCheckBox;
+	private Label firstPlayerSkillLabel;
+	private Slider firstPlayerSkillSlider;
 
 	private CheckBox soundCheckBox;
 	private Slider soundSlider;
@@ -208,7 +209,13 @@ public class MenuScreen extends AbstractGameScreen
 	}
 
 	private void onOptionsClicked()
-	{}
+	{
+		playButton.setVisible(false);
+		optionsButton.setVisible(false);
+		resetStatsButton.setVisible(false);
+		optionsWindow.setVisible(true);
+		loadSettings();
+	}
 
 	private Table buildOptionsWindowLayer()
 	{
@@ -216,12 +223,12 @@ public class MenuScreen extends AbstractGameScreen
 		// create instance of window
 		optionsWindow = new Window("Options", defaultSkin);
 
-		// second (X) player settings
-		optionsWindow.add(new Label("second Player", defaultSkin)).colspan(3);
+		// second (odd) player settings
+		optionsWindow.add(new Label("First Player", defaultSkin)).colspan(3);
 		optionsWindow.row();
-		secondPlayerHumanCheckBox = new CheckBox("Human ?", defaultSkin);
-		optionsWindow.add(secondPlayerHumanCheckBox);
-		secondPlayerHumanCheckBox.addListener(new ChangeListener()
+		firstPlayerHumanCheckBox = new CheckBox("Human ?", defaultSkin);
+		optionsWindow.add(firstPlayerHumanCheckBox);
+		firstPlayerHumanCheckBox.addListener(new ChangeListener()
 		{
 			@Override
 			public void changed(ChangeEvent event, Actor actor)
@@ -229,22 +236,22 @@ public class MenuScreen extends AbstractGameScreen
 				CheckBox me = (CheckBox) actor;
 				if (me.isChecked())
 				{
-					secondPlayerSkillSlider.setDisabled(true);
-					secondPlayerSkillLabel.setColor(skin.getColor("gray"));
+					firstPlayerSkillSlider.setDisabled(true);
+					firstPlayerSkillLabel.setColor(skin.getColor("gray"));
 				}
 				else
 				{
-					secondPlayerSkillSlider.setDisabled(false);
-					secondPlayerSkillLabel.setColor(skin.getColor("white"));
+					firstPlayerSkillSlider.setDisabled(false);
+					firstPlayerSkillLabel.setColor(skin.getColor("white"));
 				}
 			}
 		});
-		secondPlayerSkillLabel = new Label("Skill:", defaultSkin);
-		optionsWindow.add(secondPlayerSkillLabel);
-		secondPlayerSkillSlider = new Slider(0, 10, 1, false, defaultSkin);
-		optionsWindow.add(secondPlayerSkillSlider);
+		firstPlayerSkillLabel = new Label("Skill:", defaultSkin);
+		optionsWindow.add(firstPlayerSkillLabel);
+		firstPlayerSkillSlider = new Slider(0, 9, 1, false, defaultSkin);
+		optionsWindow.add(firstPlayerSkillSlider);
 		optionsWindow.row().padBottom(10);
-		// second (O) player settings
+		// second (even) player settings
 
 		optionsWindow.add(new Label("Second Player", defaultSkin)).colspan(3);
 		optionsWindow.row();
@@ -270,7 +277,7 @@ public class MenuScreen extends AbstractGameScreen
 		});
 		secondPlayerSkillLabel = new Label("Skill:", defaultSkin);
 		optionsWindow.add(secondPlayerSkillLabel);
-		secondPlayerSkillSlider = new Slider(0, 10, 1, false, defaultSkin);
+		secondPlayerSkillSlider = new Slider(0, 9, 1, false, defaultSkin);
 		optionsWindow.add(secondPlayerSkillSlider);
 		optionsWindow.row().padBottom(10);
 		// sound settings
@@ -292,7 +299,7 @@ public class MenuScreen extends AbstractGameScreen
 		soundSlider = new Slider(0.0f, 1.0f, 0.1f, false, defaultSkin);
 		optionsWindow.add(soundSlider).colspan(2);
 		optionsWindow.row().padBottom(10);
-		
+
 		// music settings
 		optionsWindow.add(new Label("music Effects", defaultSkin)).colspan(3);
 		optionsWindow.row();
@@ -334,14 +341,12 @@ public class MenuScreen extends AbstractGameScreen
 			}
 		});
 
-		
-		   // tidy up window = resize and center
-        optionsWindow.setColor(1, 1, 1, 0.8f);
-        optionsWindow.setVisible(false);
-        if (debugEnabled) optionsWindow.debug();
-        optionsWindow.pack();
-        optionsWindow.setPosition((Constants.VIEWPORT_GUI_WIDTH - optionsWindow.getWidth())/2,
-                        (Constants.VIEWPORT_GUI_HEIGHT - optionsWindow.getHeight())/2);
+		// tidy up window = resize and center
+		optionsWindow.setColor(1, 1, 1, 0.8f);
+		optionsWindow.setVisible(false);
+		if (debugEnabled) optionsWindow.debug();
+		optionsWindow.pack();
+		optionsWindow.setPosition((Constants.VIEWPORT_GUI_WIDTH - optionsWindow.getWidth()) / 2, (Constants.VIEWPORT_GUI_HEIGHT - optionsWindow.getHeight()) / 2);
 		// return constructed window
 		return optionsWindow;
 
@@ -358,6 +363,15 @@ public class MenuScreen extends AbstractGameScreen
 		GamePreferences prefs = GamePreferences.instance;
 		prefs.load();
 		// set each widget using values in prefs
+		firstPlayerHumanCheckBox.setChecked(prefs.firstPlayerHuman);
+		firstPlayerSkillSlider.setValue(prefs.firstPlayerSkill);
+		secondPlayerHumanCheckBox.setChecked(prefs.secondPlayerHuman);
+		secondPlayerSkillSlider.setValue(prefs.secondPlayerSkill);
+		soundCheckBox.setChecked(prefs.playsound);
+		musicCheckBox.setChecked(prefs.playmusic);
+		musicSlider.setValue(prefs.musicVolume);
+		soundSlider.setValue(prefs.soundVolume);
+
 	}
 
 	private void saveSettings()
@@ -365,14 +379,32 @@ public class MenuScreen extends AbstractGameScreen
 		GamePreferences prefs = GamePreferences.instance;
 
 		// save each widget value into prefs
-
+		prefs.firstPlayerHuman = firstPlayerHumanCheckBox.isChecked();
+		prefs.secondPlayerHuman = secondPlayerHumanCheckBox.isChecked();
+		prefs.firstPlayerSkill = firstPlayerSkillSlider.getValue();
+		prefs.secondPlayerSkill = secondPlayerSkillSlider.getValue();
+		prefs.musicVolume = musicSlider.getValue();
+		prefs.soundVolume = soundSlider.getValue();
+		prefs.playmusic = musicCheckBox.isChecked();
+		prefs.playsound = soundCheckBox.isChecked();
 		prefs.save();
 	}
 
 	private void onSaveClicked()
-	{}
+	{
+		saveSettings();
+		onCancelClicked();
+		AudioManager.instance.onSettingsUpdated();
+
+	}
 
 	private void onCancelClicked()
-	{}
+	{
+		playButton.setVisible(true);
+		optionsButton.setVisible(true);
+		resetStatsButton.setVisible(true);
+		optionsWindow.setVisible(false);
+		AudioManager.instance.onSettingsUpdated(); // why is the audiomaneger informt when we havent changed anything??
+	}
 
 }

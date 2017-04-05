@@ -3,6 +3,9 @@ package wit.cgd.xando.game.util;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
+import wit.cgd.xando.game.Assets;
+import wit.cgd.xando.game.Assets.AssetSounds;
+
 public class GameStats
 {
 
@@ -13,9 +16,11 @@ public class GameStats
 	public int gameCount;
 	public int currentStreak;
 	public int longestStreak;
+
 	private GameStats()
 	{
 		prefs = Gdx.app.getPreferences(Constants.STATS);
+		load();
 	}
 
 	public void load()
@@ -51,7 +56,7 @@ public class GameStats
 
 	public void draw()
 	{
-		gameCount++;
+		lose();
 	}
 
 	public void reset()
