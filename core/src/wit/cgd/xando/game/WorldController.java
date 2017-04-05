@@ -56,10 +56,10 @@ public class WorldController extends InputAdapter
 
 		Gdx.input.setInputProcessor(this);
 		board = new Board();
-		if (GamePreferences.instance.firstPlayerHuman) board.firstPlayer = new HumanPlayer(board, board.X);
-		else board.firstPlayer = new MinimaxPlayerTeacher(board, board.X,(int) GamePreferences.instance.firstPlayerSkill);
-		if (GamePreferences.instance.secondPlayerHuman) board.secondPlayer = new HumanPlayer(board, board.O);
-		else board.secondPlayer = new MinimaxPlayerTeacher(board, board.O,(int) GamePreferences.instance.secondPlayerSkill);
+		if (GamePreferences.instance.firstPlayerHuman) board.firstPlayer = new HumanPlayer(board, board.odd);
+		else board.firstPlayer = new MinimaxPlayerTeacher(board, board.odd,(int) GamePreferences.instance.firstPlayerSkill);
+		if (GamePreferences.instance.secondPlayerHuman) board.secondPlayer = new HumanPlayer(board, board.even);
+		else board.secondPlayer = new MinimaxPlayerTeacher(board, board.even,(int) GamePreferences.instance.secondPlayerSkill);
 		timeLeftGameOverDelay = 1.5f;
 		
 		board.start();
@@ -73,13 +73,13 @@ public class WorldController extends InputAdapter
 			timeLeftGameOverDelay -= deltaTime;
 			if (timeLeftGameOverDelay < 0)
 			{
-				if ((board.gameState == board.gameState.X_WON && board.firstPlayer.human && !board.secondPlayer.human)
-						|| (board.gameState == board.gameState.O_WON && !board.firstPlayer.human && board.secondPlayer.human))
+				if ((board.gameState == board.gameState.Odd_WON && board.firstPlayer.human && !board.secondPlayer.human)
+						|| (board.gameState == board.gameState.Even_WON && !board.firstPlayer.human && board.secondPlayer.human))
 				{
 					GameStats.instance.win();
 				}
-				else if ((board.gameState == board.gameState.X_WON && !board.firstPlayer.human && board.secondPlayer.human)
-						|| (board.gameState == board.gameState.O_WON && board.firstPlayer.human && !board.secondPlayer.human))
+				else if ((board.gameState == board.gameState.Odd_WON && !board.firstPlayer.human && board.secondPlayer.human)
+						|| (board.gameState == board.gameState.Even_WON && board.firstPlayer.human && !board.secondPlayer.human))
 				{
 					GameStats.instance.lose();
 				}

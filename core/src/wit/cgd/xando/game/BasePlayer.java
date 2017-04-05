@@ -17,7 +17,7 @@ public abstract class BasePlayer
 	public void setSymbol(int symbol)
 	{
 		mySymbol = symbol;
-		opponentSymbol = (symbol == board.X) ? board.O : board.X;
+		opponentSymbol = (symbol == board.odd) ? board.even : board.odd;
 	}
 
 	public abstract int move();

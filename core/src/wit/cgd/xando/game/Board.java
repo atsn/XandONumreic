@@ -14,14 +14,14 @@ public class Board
 
 	public static enum GameState
 	{
-		PLAYING, DRAW, X_WON, O_WON
+		PLAYING, DRAW, Odd_WON, Even_WON
 	}
 
 	public GameState gameState;
 
 	public final int EMPTY = 0;
-	public final int X = 1;
-	public final int O = 2;
+	public final int odd = 1;
+	public final int even = 2;
 	public int[][] cells = new int[3][3];
 
 	public BasePlayer firstPlayer, secondPlayer;
@@ -33,8 +33,7 @@ public class Board
 	}
 
 	public void init()
-	{
-	}
+	{}
 
 	public void start()
 	{
@@ -49,7 +48,6 @@ public class Board
 	public boolean move()
 	{
 		return move(-1, -1);
-	
 
 	}
 
@@ -68,7 +66,7 @@ public class Board
 			row = pos / 3;
 			AudioManager.instance.play(Assets.instance.sounds.second);
 		}
-		
+
 		System.out.println(" " + currentPlayer.human + " " + row + " " + col);
 		// store move
 		cells[row][col] = currentPlayer.mySymbol;
@@ -80,7 +78,7 @@ public class Board
 		System.out.println();
 		if (hasWon(currentPlayer.mySymbol, row, col))
 		{
-			gameState = currentPlayer.mySymbol == X ? GameState.X_WON : GameState.O_WON;
+			gameState = currentPlayer.mySymbol == odd? GameState.Odd_WON : GameState.Even_WON;
 			if (currentPlayer.human)
 			{
 				AudioManager.instance.play(Assets.instance.sounds.win);
@@ -138,18 +136,69 @@ public class Board
 				false, false);
 
 		// draw drag and drop pieces
-		region = Assets.instance.x.region;
-		batch.draw(region.getTexture(), (-1) * 1.4f - 1.9f, 1 * 1.4f - 2.3f, 0, 0, 1, 1, 1, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(), false,
+		region = Assets.instance.number1.region;
+		batch.draw(region.getTexture(), (-1) * 1.4f - 1.9f, 1 * 1.4f - 2.3f, 0, 0, 1, 0.5f, 0.5f, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(), false,
 				false);
-		region = Assets.instance.o.region;
-		batch.draw(region.getTexture(), (3) * 1.4f - 1.9f, 1 * 1.4f - 2.3f, 0, 0, 1, 1, 1, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(), false,
+		region = Assets.instance.number2.region;
+		batch.draw(region.getTexture(), (3) * 1.4f - 1.9f, 1 * 1.4f - 2.3f, 0, 0, 1, 0.5f, 0.5f, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(), false,
+				false);
+		region = Assets.instance.number3.region;
+		batch.draw(region.getTexture(), (-1) * 1.4f - 1.9f, 2 * 1.4f - 2.3f, 0, 0, 1, 0.5f, 0.5f, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(), false,
+				false);
+		region = Assets.instance.number4.region;
+		batch.draw(region.getTexture(), (3) * 1.4f - 1.9f, 2 * 1.4f - 2.3f, 0, 0, 1, 0.5f, 0.5f, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(), false,
+				false);
+		region = Assets.instance.number5.region;
+		batch.draw(region.getTexture(), (-1) * 1.4f - 1.9f, 0 * 1.4f - 2.3f, 0, 0, 1, 0.5f, 0.5f, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(), false,
+				false);
+		region = Assets.instance.number6.region;
+		batch.draw(region.getTexture(), (3) * 1.4f - 1.9f, 0 * 1.4f - 2.3f, 0, 0, 1, 0.5f, 0.5f, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(), false,
+				false);
+		region = Assets.instance.number7.region;
+		batch.draw(region.getTexture(), (-1) * 1.4f - 1.9f, (-1) * 1.4f - 2.3f, 0, 0, 1, 0.5f, 0.5f, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(), false,
+				false);
+		region = Assets.instance.number8.region;
+		batch.draw(region.getTexture(), (3) * 1.4f - 1.9f, (-1) * 1.4f - 2.3f, 0, 0, 1, 0.5f, 0.5f, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(), false,
+				false);
+		region = Assets.instance.number9.region;
+		batch.draw(region.getTexture(), (-1) * 1.4f - 1.9f, 2 * 1.4f - 2.3f, 0, 0, 1, 0.5f, 0.5f, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(), false,
 				false);
 
 		for (int row = 0; row < 3; row++)
 			for (int col = 0; col < 3; col++)
 			{
 				if (cells[row][col] == EMPTY) continue;
-				region = cells[row][col] == X ? Assets.instance.x.region : Assets.instance.o.region;
+				switch (cells[row][col])
+				{
+
+				case 1:
+					region = Assets.instance.number1.region;
+					break;
+				case 2:
+					region = Assets.instance.number2.region;
+					break;
+				case 3:
+					region = Assets.instance.number3.region;
+					break;
+				case 4:
+					region = Assets.instance.number4.region;
+					break;
+				case 5:
+					region = Assets.instance.number5.region;
+					break;
+				case 6:
+					region = Assets.instance.number6.region;
+					break;
+				case 7:
+					region = Assets.instance.number7.region;
+					break;
+				case 8:
+					region = Assets.instance.number8.region;
+					break;
+				case 9:
+					region = Assets.instance.number9.region;
+					break;
+				}
 				batch.draw(region.getTexture(), col * 1.4f - 1.9f, row * 1.4f - 2.3f, 0, 0, 1, 1, 1, 1, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight(),
 						false, false);
 			}

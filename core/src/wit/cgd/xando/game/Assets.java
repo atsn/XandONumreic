@@ -29,6 +29,15 @@ public class Assets implements Disposable, AssetErrorListener
 	public Asset board;
 	public Asset x;
 	public Asset o;
+	public Asset number1;
+	public Asset number2;
+	public Asset number3;
+	public Asset number4;
+	public Asset number5;
+	public Asset number6;
+	public Asset number7;
+	public Asset number8;
+	public Asset number9;
 	public AssetSounds sounds;
 	public AssetMusic music;
 
@@ -58,6 +67,16 @@ public class Assets implements Disposable, AssetErrorListener
 		board = new Asset(atlas, "board2");
 		x = new Asset(atlas, "x");
 		o = new Asset(atlas, "o");
+		number1 = new Asset(atlas, "1");
+		number2 = new Asset(atlas, "2");
+		number3 = new Asset(atlas, "3");
+		number4 = new Asset(atlas, "4");
+		number5 = new Asset(atlas, "5");
+		number6 = new Asset(atlas, "6");
+		number7 = new Asset(atlas, "7");
+		number8 = new Asset(atlas, "8");
+		number9 = new Asset(atlas, "9");
+		
 	
 		// load sounds
 		assetManager.load("sounds/first.wav", Sound.class);

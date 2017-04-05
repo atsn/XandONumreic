@@ -83,8 +83,8 @@ public class WorldRenderer implements Disposable
 			float y = cameraGUI.viewportHeight / 2;
 			BitmapFont fontGameOver = Assets.instance.fonts.defaultBig;
 			fontGameOver.setColor(1, 0.75f, 0.25f, 1);
-			String message = "X Won";
-			if (worldController.board.gameState == worldController.board.gameState.O_WON) message = "O Won";
+			String message = "odd Won";
+			if (worldController.board.gameState == worldController.board.gameState.Even_WON) message = "even Won";
 			else if (worldController.board.gameState == worldController.board.gameState.DRAW) message = "Draw";
 			fontGameOver.draw(batch, message, x, y, 0, Align.center, true);
 			fontGameOver.setColor(1, 1, 1, 1);
