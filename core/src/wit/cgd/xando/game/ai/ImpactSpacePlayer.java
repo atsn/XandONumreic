@@ -1,8 +1,6 @@
 package wit.cgd.xando.game.ai;
 
-import java.util.Random;
-
-import sun.invoke.empty.Empty;
+import java.util.ArrayList;
 import wit.cgd.xando.game.BasePlayer;
 import wit.cgd.xando.game.Board;
 import wit.cgd.xando.game.WorldRenderer;
@@ -19,42 +17,59 @@ public class ImpactSpacePlayer extends BasePlayer
 	}
 
 	@Override
-	public int move()
+	public Move move()
 	{
-		Move move = getbestmove();
-		return move.x * 3 + move.y;
+		return getbestmove();
 
 	}
 
 	private Move getbestmove()
 	{
-		for (int x : new int[] { 1 })
-		{
-			for (int y : new int[] { 1 })
-			{
-				if (board.cells[x][y] == board.EMPTY) return new Move(x, y);
-			}
-		}
-		
-		for (int y : new int[] { 0,2 })
-		{
-			for (int x : new int[] { 0,2 })
-			{
-				if (board.cells[x][y] == board.EMPTY) return new Move(x, y);
-			}
-		}
-		
+		ArrayList<Integer> numbers;
 
-		int x = -1;
-		int y = -1;
-		do
+		if (mySymbol == board.odd)
 		{
-			Random random = new Random(System.currentTimeMillis());
-			x = random.nextInt(3);
-			y = random.nextInt(3);
+			numbers = board.eveNumbers;
 		}
-		while (board.cells[x][y] != board.EMPTY);
-		return new Move(x, y);
+		else
+		{
+			numbers = board.oddNumbers;
+		}
+
+		BasePlayer tempplayer = new MinimaxPlayer(board, mySymbol, 0);
+		Move returnmove = tempplayer.move();
+
+		if (returnmove.score == 100)
+		{
+			return returnmove;
+		}
+		else
+		{
+			for (int r = 0; r < 3; ++r)
+			{
+				for (int c = 0; c < 3; ++c)
+				{
+					// skip over used positions
+					if (board.cells[r][c] != board.EMPTY) continue;
+
+					for (int i = 0; i < numbers.size(); i++)
+					{
+						board.cells[r][c] = numbers.get(i);
+						if (board.hasWon(opponentSymbol, r, c))
+						{
+							board.cells[r][c] = board.EMPTY;
+							returnmove = new Move(r, c, board.eveNumbers.get(0), 0);
+						}
+						board.cells[r][c] = board.EMPTY;
+					}
+				}
+			}
+			
+		}
+		
+		tempplayer = new RandomSpacePlayer(board, mySymbol);
+		returnmove = tempplayer.move();
+		return returnmove;
+
 	}
-
 }

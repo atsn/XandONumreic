@@ -1,14 +1,9 @@
 package wit.cgd.xando.game.ai;
 
-import java.util.ArrayList;
 import java.util.Random;
-
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-
 import wit.cgd.xando.game.BasePlayer;
 import wit.cgd.xando.game.Board;
 import wit.cgd.xando.game.WorldRenderer;
-import wit.cgd.xando.game.util.GamePreferences;
 
 public class RandomSpacePlayer extends BasePlayer
 {
@@ -19,31 +14,40 @@ public class RandomSpacePlayer extends BasePlayer
 	public RandomSpacePlayer(Board board, int symbol)
 	{
 		super(board, symbol);
-		name = "FirstSpacePlayer";
+		name = "RandomSpacePlayer";
 	}
 
 	@Override
-	public int move()
+	public Move move()
 	{
-		Move move = getbestmove();
-		return move.x * 3 + move.y;
-
+		return getbestmove();
 	}
-
 
 	private Move getbestmove()
 	{
+		Random random = new Random();
 		int x = -1;
 		int y = -1;
+		int number = -1;
+		
+		if (mySymbol == board.odd)
+		{
+			number = board.oddNumbers.get(random.nextInt(board.oddNumbers.size()));
+		}
+		if (mySymbol == board.even)
+		{
+			number = board.eveNumbers.get(random.nextInt(board.eveNumbers.size()));
+		}
+
 		do
 		{
-			Random random = new Random(System.currentTimeMillis());
+
 			x = random.nextInt(3);
 			y = random.nextInt(3);
+
 		}
 		while (board.cells[x][y] != board.EMPTY);
-
-		return new Move(x, y);
+		return new Move(x, y, number, 0);
 	}
 
 }

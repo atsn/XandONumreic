@@ -2,120 +2,144 @@ package wit.cgd.xando.game.ai;
 
 import java.util.ArrayList;
 import java.util.Random;
-
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-
 import wit.cgd.xando.game.BasePlayer;
 import wit.cgd.xando.game.Board;
-import wit.cgd.xando.game.WorldRenderer;
-import wit.cgd.xando.game.util.GamePreferences;
 
 public class MinimaxPlayer extends BasePlayer
 {
 
-	@SuppressWarnings("unused")
-	private static final String TAG = WorldRenderer.class.getName();
-
 	private Random randomGenerator;
-	public int skill;
-	public int i = 0;
+	int skill;
 
 	public MinimaxPlayer(Board board, int symbol, int Skill)
 	{
 		super(board, symbol);
-		skill = Skill;
-		name = "FirstSpacePlayer";
 		randomGenerator = new Random();
+		skill = Skill; // skill is measure of search depth
+	
 	}
 
 	@Override
-	public int move()
+	public Move move()
 	{
-
-		Move move = getbestmove(-1, -1, true, (int) skill);
-		return move.x * 3 + move.y;
-
+		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+		Move move = minimax(mySymbol, opponentSymbol, 0);
+		return move;
 	}
 
-	// get best move sorce https://www.youtube.com/watch?v=CwziaVrM_vc
-	private Move getbestmove(int lastmoveX, int LastMoveY, boolean Isme, int numberOfRecursions)
+	private Move minimax(int p_mySymbol, int p_opponentSymbol, int depth)
 	{
-		i++;
-		numberOfRecursions--;
-
-		if (lastmoveX >= 0 && LastMoveY >= 0)
+		
+		ArrayList<Integer> numbers;
+		boolean isreachet = false;
+		int returnnumber = -1;
+		if (p_mySymbol == board.odd)
 		{
-			if (board.hasWon(mySymbol, lastmoveX, LastMoveY)) return new Move(10);
-			if (board.hasWon(opponentSymbol, lastmoveX, LastMoveY)) return new Move(-10);
-			if (board.isDraw()) return new Move(0);
+			numbers = board.oddNumbers;
 		}
-		if (numberOfRecursions == 0)
-		{
-			for (int x = 2; x >= 0; --x)
-			{
-				for (int y = 0; y < 3; ++y)
-				{
-					if (board.cells[x][y] == board.EMPTY) return new Move(x, y, 0);
-				}
-			}
-		}
-
-		ArrayList<Move> moves = new ArrayList<Move>();
-		for (int x = 2; x >= 0; --x)
-		{
-			for (int y = 0; y < 3; ++y)
-			{
-				if (board.cells[x][y] != board.EMPTY) continue;
-
-				Move move = new Move(x, y);
-				if (Isme) board.cells[x][y] = mySymbol;
-				else board.cells[x][y] = opponentSymbol;
-
-				if (Isme)
-				{
-					move.score = +getbestmove(x, y, false, numberOfRecursions).score;
-				}
-				if (!Isme)
-				{
-					move.score = +getbestmove(x, y, true, numberOfRecursions).score;
-				}
-				moves.add(move);
-				board.cells[x][y] = board.EMPTY;
-
-			}
-		}
-
-		Move bestmove = null;
-		if (Isme)
-		{
-
-			int bestscore = Integer.MIN_VALUE;
-			for (Move move : moves)
-			{
-				if (move.score > bestscore)
-				{
-					bestscore = move.score;
-					bestmove = move;
-				}
-			}
-
-		}
-
 		else
 		{
-			int bestscore = Integer.MAX_VALUE;
-			for (Move move : moves)
+			numbers = board.eveNumbers;
+		}
+		final float WIN_SCORE = 100;
+		final float DRAW_SCORE = 0;
+
+		float score;
+		float maxScore = -10000;
+		int maxPos = -1;
+
+		// for each board position
+		for (int r = 0; r < 3; ++r)
+		{
+			for (int c = 0; c < 3; ++c)
 			{
-				if (move.score < bestscore)
+				// skip over used positions
+				if (board.cells[r][c] != board.EMPTY) continue;
+
+				for (int i = 0; i < numbers.size(); i++)
 				{
-					bestscore = move.score;
-					bestmove = move;
+
+					int number = numbers.get(i);
+					// place move
+					board.cells[r][c] = number;
+
+					// evaluate board (recursively)
+					if (p_mySymbol == board.odd)
+					{
+						board.oddNumbers.remove(i);
+					}
+					else
+					{
+						board.eveNumbers.remove(i);
+					}
+
+					if (board.hasWon(p_mySymbol, r, c))
+					{
+						score = WIN_SCORE;
+					}
+
+					else if (board.isDraw())
+					{
+						score = DRAW_SCORE;
+					}
+
+					else
+					{
+
+						if (depth < skill)
+						{
+							score = -minimax(p_opponentSymbol, p_mySymbol, depth + 1).score;
+						}
+						else
+						{
+							score = 0;
+						}
+					}
+
+					if (p_mySymbol == board.odd)
+					{
+						board.oddNumbers.add(i, number);
+					}
+					else
+					{
+						board.eveNumbers.add(i, number);
+					}
+
+					// update ranking
+					if (maxScore - score < 1 && maxScore-score > -0.1 && randomGenerator.nextDouble() < 0.49)
+					{
+						maxScore = score;
+						maxPos = 3 * r + c;
+						returnnumber = number;
+						isreachet = true;
+					}
+
+					else if (score > maxScore)
+					{ // clear
+						maxScore = score;
+						maxPos = 3 * r + c;
+						returnnumber = number;
+						isreachet = true;
+					}
+
+				// Gdx.app.log("\t", "Score "+score+ "Debth"+ depth);
+
+					// undo move
+
+					board.cells[r][c] = board.EMPTY;
+
 				}
 			}
-
 		}
-		System.out.print(i + "\n");
-		return bestmove;
-	}
+		
+		if (!isreachet)
+		{
+			maxScore = 0;
+		}
+
+		// on uppermost call return move not score
+		return new Move(maxPos / 3, maxPos % 3, returnnumber, (int) maxScore);
+
+	};
 
 }

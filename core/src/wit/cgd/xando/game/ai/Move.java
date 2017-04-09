@@ -2,28 +2,36 @@ package wit.cgd.xando.game.ai;
 
 public class Move
 {
-	public int x;
-	public int y;
+	public int row;
+	public int col;
 	public int score;
+	public int number;
 
-	public Move(int X, int Y, int Score)
+	public Move(int row, int col, int score)
 	{
-		score = Score;
-		x = X;
-		y = Y;
+		this.score = score;
+		this.row = row;
+		this.col = col;
 	}
 	
-	public Move(int Score)
+	public Move(int score)
 	{
-		score = Score;
-		x = 0;
-		y = 0;
+		this.score = score;
+		row = 0;
+		col = 0;
 	}
 	
-	public Move(int X, int Y)
+	public Move(int row, int col)
 	{
 		score = 0;
-		x = X;
-		y = Y;
+		this.row =row;
+		this.col = col;
+	}
+	public Move(int row, int col,int number, int score)
+	{
+		this.number = number;
+		this.score = score;
+		this.row = row;
+		this.col = col;
 	}
 }

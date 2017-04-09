@@ -1,10 +1,9 @@
 package wit.cgd.xando.game;
 
+import wit.cgd.xando.game.Board.GameState;
 import wit.cgd.xando.game.ai.FirstSpacePlayer;
 import wit.cgd.xando.game.ai.ImpactSpacePlayer;
 import wit.cgd.xando.game.ai.MinimaxPlayer;
-import wit.cgd.xando.game.ai.MinimaxPlayerTeacher;
-import wit.cgd.xando.game.ai.RandomImpactSpacePlayer;
 import wit.cgd.xando.game.ai.RandomSpacePlayer;
 import wit.cgd.xando.game.util.GamePreferences;
 import wit.cgd.xando.game.util.GameStats;
@@ -13,9 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
-import java.util.Random;
-
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.Game;
 import wit.cgd.xando.screens.MenuScreen;
 
@@ -31,13 +28,16 @@ public class WorldController extends InputAdapter
 	private static final String TAG = WorldRenderer.class.getName();
 
 	public float viewportWidth;
+	public float viewportHeight;
 	public int width, height;
+	Vector3 cameraposition;
 	public Board board;
 	float timeLeftGameOverDelay;
 	private Game game;
 	boolean dragging = false;
 	int dragX, dragY;
 	TextureRegion dragRegion;
+	int playingnumber;
 
 	private void backToMenu()
 	{
@@ -57,11 +57,17 @@ public class WorldController extends InputAdapter
 		Gdx.input.setInputProcessor(this);
 		board = new Board();
 		if (GamePreferences.instance.firstPlayerHuman) board.firstPlayer = new HumanPlayer(board, board.odd);
-		else board.firstPlayer = new MinimaxPlayerTeacher(board, board.odd,(int) GamePreferences.instance.firstPlayerSkill);
+		else if (GamePreferences.instance.firstPlayerSkill == 0) board.firstPlayer = new FirstSpacePlayer(board, board.odd);
+		else if (GamePreferences.instance.firstPlayerSkill == 1) board.firstPlayer = new RandomSpacePlayer(board, board.odd);
+		else if (GamePreferences.instance.firstPlayerSkill == 2) board.firstPlayer = new ImpactSpacePlayer(board, board.odd);
+		else board.firstPlayer = new MinimaxPlayer(board, board.odd, (int) GamePreferences.instance.firstPlayerSkill - 2);
 		if (GamePreferences.instance.secondPlayerHuman) board.secondPlayer = new HumanPlayer(board, board.even);
-		else board.secondPlayer = new MinimaxPlayerTeacher(board, board.even,(int) GamePreferences.instance.secondPlayerSkill);
+		else if (GamePreferences.instance.secondPlayerSkill == 0) board.secondPlayer = new FirstSpacePlayer(board, board.even);
+		else if (GamePreferences.instance.secondPlayerSkill == 1) board.secondPlayer = new RandomSpacePlayer(board, board.even);
+		else if (GamePreferences.instance.secondPlayerSkill == 1) board.secondPlayer = new ImpactSpacePlayer(board, board.even);
+		else board.secondPlayer = new MinimaxPlayer(board, board.even, (int) GamePreferences.instance.secondPlayerSkill - 2);
 		timeLeftGameOverDelay = 1.5f;
-		
+
 		board.start();
 	}
 
@@ -73,13 +79,13 @@ public class WorldController extends InputAdapter
 			timeLeftGameOverDelay -= deltaTime;
 			if (timeLeftGameOverDelay < 0)
 			{
-				if ((board.gameState == board.gameState.Odd_WON && board.firstPlayer.human && !board.secondPlayer.human)
-						|| (board.gameState == board.gameState.Even_WON && !board.firstPlayer.human && board.secondPlayer.human))
+				if ((board.gameState == GameState.Odd_WON && board.firstPlayer.human && !board.secondPlayer.human)
+						|| (board.gameState == GameState.Even_WON && !board.firstPlayer.human && board.secondPlayer.human))
 				{
 					GameStats.instance.win();
 				}
-				else if ((board.gameState == board.gameState.Odd_WON && !board.firstPlayer.human && board.secondPlayer.human)
-						|| (board.gameState == board.gameState.Even_WON && board.firstPlayer.human && !board.secondPlayer.human))
+				else if ((board.gameState == GameState.Odd_WON && !board.firstPlayer.human && board.secondPlayer.human)
+						|| (board.gameState == GameState.Even_WON && board.firstPlayer.human && !board.secondPlayer.human))
 				{
 					GameStats.instance.lose();
 				}
@@ -103,35 +109,98 @@ public class WorldController extends InputAdapter
 	{
 		if (board.gameState == Board.GameState.PLAYING && board.currentPlayer.human)
 		{
-
+			
+			
 			// convert to cell position
-			int row = 4 * (height - screenY) / height;
+			float row = (float) (4 * (height - screenY) / (height - 0.5));
 			int col2 = (int) (viewportWidth * (screenX - 0.465 * width) / width) + 1;
 			int col3 = (int) (viewportWidth * (screenX - 0.54 * width) / width) + 1;
-			int col = (int) (viewportWidth * (screenX - 0.5 * width) / width) + 1;
-			// board move - just place piece and return
-			if (row >= 0 && row < 3 && col >= 0 && col < 3)
+			
+			if (screenX >700  && screenX<746 && screenY > 413 && screenY < 460)
 			{
-				board.move(row, col);
-				return true;
+				board.isundopressed = true;
+				board.Undo();
 			}
+			
+			if (screenX >621  && screenX<667 && screenY > 413 && screenY < 460)
+			{
+				board.ishintpressed = true;
+				board.Dohint();
+			}
+			
 
 			dragX = screenX;
 			dragY = screenY;
-
-			// check if valid start of a drag for first player
-			if (row == 1 && col2 == -1 && board.currentPlayer == board.firstPlayer)
+			if (col2 == -1)
 			{
-				dragging = true;
-				dragRegion = Assets.instance.x.region;
-				return true;
+				if (row > 2.7 && board.currentPlayer == board.firstPlayer)
+				{
+					dragging = true;
+					dragRegion = Assets.instance.number9.region;
+					playingnumber = 9;
+					return true;
+				}
+				if (row > 2.2 && board.currentPlayer == board.firstPlayer)
+				{
+					dragging = true;
+					dragRegion = Assets.instance.number3.region;
+					playingnumber = 3;
+					return true;
+				}
+				if (row > 1.5 && board.currentPlayer == board.firstPlayer)
+				{
+					dragging = true;
+					dragRegion = Assets.instance.number1.region;
+					playingnumber = 1;
+					return true;
+				}
+				if (row > 1 && board.currentPlayer == board.firstPlayer)
+				{
+					dragging = true;
+					dragRegion = Assets.instance.number5.region;
+					playingnumber = 5;
+					return true;
+				}
+				if (row > 0.5 && board.currentPlayer == board.firstPlayer)
+				{
+					dragging = true;
+					dragRegion = Assets.instance.number7.region;
+					playingnumber = 7;
+					return true;
+				}
 			}
-			// check if valid start of a drag for second player
-			if (row == 1 && col3 == 3 && board.currentPlayer == board.secondPlayer)
+
+			if (col3 == 3)
 			{
-				dragging = true;
-				dragRegion = Assets.instance.o.region;
-				return true;
+				if (row > 2.3 && col3 == 3 && board.currentPlayer == board.secondPlayer)
+				{
+					dragging = true;
+					dragRegion = Assets.instance.number4.region;
+					playingnumber = 4;
+					return true;
+				}
+				if (row > 1.7 && col3 == 3 && board.currentPlayer == board.secondPlayer)
+				{
+					dragging = true;
+					dragRegion = Assets.instance.number2.region;
+					playingnumber = 2;
+					return true;
+				}
+				if (row > 1.2 && col3 == 3 && board.currentPlayer == board.secondPlayer)
+				{
+					dragging = true;
+					dragRegion = Assets.instance.number6.region;
+					playingnumber = 6;
+					return true;
+				}
+				if (row > 0 && col3 == 3 && board.currentPlayer == board.secondPlayer && !board.isundopressed)
+				{
+					dragging = true;
+					dragRegion = Assets.instance.number8.region;
+					playingnumber = 8;
+					return true;
+				}
+
 			}
 
 		}
@@ -149,8 +218,15 @@ public class WorldController extends InputAdapter
 
 	public boolean touchUp(int screenX, int screenY, int pointer, int button)
 	{
+		if (board.ishintpressed)
+		{
+			board.undohint();
+		}
+		board.ishintpressed = false;
+		board.isundopressed = false;
 		if (dragging == true)
 		{
+			
 			dragging = false;
 
 			// convert to cell position
@@ -158,9 +234,9 @@ public class WorldController extends InputAdapter
 			int col = (int) (viewportWidth * (screenX - 0.5 * width) / width) + 1;
 
 			// if a valid board cell then place piece
-			if (row >= 0 && row < 3 && col >= 0 && col < 3 && board.gameState == board.gameState.PLAYING)
+			if (row >= 0 && row < 3 && col >= 0 && col < 3 && board.gameState == GameState.PLAYING)
 			{
-				board.move(row, col);
+				board.move(row, col, playingnumber);
 				return true;
 			}
 

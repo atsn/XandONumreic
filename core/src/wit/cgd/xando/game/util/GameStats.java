@@ -3,9 +3,6 @@ package wit.cgd.xando.game.util;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
-import wit.cgd.xando.game.Assets;
-import wit.cgd.xando.game.Assets.AssetSounds;
-
 public class GameStats
 {
 

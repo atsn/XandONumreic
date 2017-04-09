@@ -1,11 +1,14 @@
 package wit.cgd.xando.game;
 
+import wit.cgd.xando.game.ai.Move;
+
 public abstract class BasePlayer
 {
 	public boolean human;
 	public int mySymbol, opponentSymbol;
 	public String name;
 	public Board board;
+	public int lastPlayedNuber;
 
 	public BasePlayer(Board board, int symbol)
 	{
@@ -20,6 +23,6 @@ public abstract class BasePlayer
 		opponentSymbol = (symbol == board.odd) ? board.even : board.odd;
 	}
 
-	public abstract int move();
+	public abstract Move move();
 
 }

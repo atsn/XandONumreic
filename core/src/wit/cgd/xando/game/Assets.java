@@ -18,7 +18,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 public class Assets implements Disposable, AssetErrorListener
 {
 
-	@SuppressWarnings("unused")
 	private static final String TAG = WorldRenderer.class.getName();
 
 	public static final Assets instance = new Assets();
@@ -38,6 +37,10 @@ public class Assets implements Disposable, AssetErrorListener
 	public Asset number7;
 	public Asset number8;
 	public Asset number9;
+	public Asset undoup;
+	public Asset undodn;
+	public Asset hintup;
+	public Asset hintdn;
 	public AssetSounds sounds;
 	public AssetMusic music;
 
@@ -76,6 +79,10 @@ public class Assets implements Disposable, AssetErrorListener
 		number7 = new Asset(atlas, "7");
 		number8 = new Asset(atlas, "8");
 		number9 = new Asset(atlas, "9");
+		undoup = new Asset(atlas, "undo-up");
+		undodn = new Asset(atlas, "undo-dn");
+		hintup = new Asset(atlas, "hint-up");
+		hintdn = new Asset(atlas, "hint-dn");
 		
 	
 		// load sounds
@@ -102,7 +109,7 @@ public class Assets implements Disposable, AssetErrorListener
 	}
 
 	@Override
-	public void error(AssetDescriptor asset, Throwable throwable)
+	public void error(@SuppressWarnings("rawtypes") AssetDescriptor asset, Throwable throwable)
 	{
 		Gdx.app.error(TAG, "Couldn't load asset '" + asset + "'", (Exception) throwable);
 	}

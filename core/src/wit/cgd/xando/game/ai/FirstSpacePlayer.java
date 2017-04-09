@@ -1,13 +1,8 @@
 package wit.cgd.xando.game.ai;
 
-import java.util.ArrayList;
-
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-
 import wit.cgd.xando.game.BasePlayer;
 import wit.cgd.xando.game.Board;
 import wit.cgd.xando.game.WorldRenderer;
-import wit.cgd.xando.game.util.GamePreferences;
 
 public class FirstSpacePlayer extends BasePlayer
 {
@@ -22,10 +17,11 @@ public class FirstSpacePlayer extends BasePlayer
 	}
 
 	@Override
-	public int move()
+	public Move move()
 	{
-		Move move = getbestmove();
-		return move.x * 3 + move.y;
+		
+		return getbestmove();
+	
 
 	}
 
@@ -36,7 +32,15 @@ public class FirstSpacePlayer extends BasePlayer
 		{
 			for (int y = 0; y < 3; ++y)
 			{
-				if (board.cells[x][y] == board.EMPTY) return new Move(x, y);
+				if (mySymbol == board.odd)
+				{
+					if (board.cells[x][y] == board.EMPTY) return new Move(x, y,board.oddNumbers.get(0),0);
+				}
+				
+				if (mySymbol == board.even )
+				{
+					if (board.cells[x][y] == board.EMPTY) return new Move(x, y,board.eveNumbers.get(0),0);
+				}
 			}
 		}
 

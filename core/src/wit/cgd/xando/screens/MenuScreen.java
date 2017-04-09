@@ -10,15 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-
 import wit.cgd.xando.game.util.AudioManager;
 import wit.cgd.xando.game.util.Constants;
 import wit.cgd.xando.game.util.GamePreferences;
@@ -248,7 +245,7 @@ public class MenuScreen extends AbstractGameScreen
 		});
 		firstPlayerSkillLabel = new Label("Skill:", defaultSkin);
 		optionsWindow.add(firstPlayerSkillLabel);
-		firstPlayerSkillSlider = new Slider(0, 9, 1, false, defaultSkin);
+		firstPlayerSkillSlider = new Slider(0, 7, 1, false, defaultSkin);
 		optionsWindow.add(firstPlayerSkillSlider);
 		optionsWindow.row().padBottom(10);
 		// second (even) player settings
@@ -277,7 +274,7 @@ public class MenuScreen extends AbstractGameScreen
 		});
 		secondPlayerSkillLabel = new Label("Skill:", defaultSkin);
 		optionsWindow.add(secondPlayerSkillLabel);
-		secondPlayerSkillSlider = new Slider(0, 9, 1, false, defaultSkin);
+		secondPlayerSkillSlider = new Slider(0, 7, 1, false, defaultSkin);
 		optionsWindow.add(secondPlayerSkillSlider);
 		optionsWindow.row().padBottom(10);
 		// sound settings

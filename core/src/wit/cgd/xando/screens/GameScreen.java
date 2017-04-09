@@ -3,8 +3,6 @@ package wit.cgd.xando.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-
-import wit.cgd.xando.XandOMain;
 import wit.cgd.xando.game.WorldController;
 import wit.cgd.xando.game.WorldRenderer;
 
@@ -16,7 +14,7 @@ public class GameScreen extends AbstractGameScreen
 
 	private WorldController worldController;
 	private WorldRenderer worldRenderer;
-
+	int i = 0;
 	private boolean paused;
 
 	public GameScreen(Game game)
@@ -35,12 +33,14 @@ public class GameScreen extends AbstractGameScreen
 		worldRenderer.render();
 		// Do not update game world when paused.
 
-		if (!paused)
+		if (!paused && i != 0)
 		{
+
 			// Update game world by the time that has passed
 			// since last rendered frame.
 			worldController.update(deltaTime);
 		}
+		i++;
 	}
 
 	@Override

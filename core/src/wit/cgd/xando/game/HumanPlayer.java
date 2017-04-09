@@ -1,5 +1,7 @@
 package wit.cgd.xando.game;
 
+import wit.cgd.xando.game.ai.Move;
+
 public class HumanPlayer extends BasePlayer
 {
 
@@ -14,10 +16,10 @@ public class HumanPlayer extends BasePlayer
 	}
 
 	@Override
-	public int move()
+	public Move move()
 	{
 		// human move handled in worldController
-		return 0;
+		return new Move(1);
 	}
 
 }

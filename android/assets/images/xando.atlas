@@ -6,72 +6,100 @@ filter: Nearest,Nearest
 repeat: none
 1
   rotate: false
-  xy: 2, 2
+  xy: 2, 36
   size: 195, 190
   orig: 195, 190
   offset: 0, 0
   index: -1
 2
   rotate: false
-  xy: 199, 6
+  xy: 199, 40
   size: 193, 186
   orig: 193, 186
   offset: 0, 0
   index: -1
 3
   rotate: false
-  xy: 394, 6
+  xy: 394, 40
   size: 193, 186
   orig: 193, 186
   offset: 0, 0
   index: -1
 4
   rotate: false
-  xy: 589, 6
+  xy: 589, 40
   size: 193, 186
   orig: 193, 186
   offset: 0, 0
   index: -1
 5
   rotate: false
-  xy: 751, 774
+  xy: 751, 808
   size: 193, 186
   orig: 193, 186
   offset: 0, 0
   index: -1
 6
   rotate: false
-  xy: 751, 586
+  xy: 751, 620
   size: 193, 186
   orig: 193, 186
   offset: 0, 0
   index: -1
 7
   rotate: false
-  xy: 751, 398
+  xy: 751, 432
   size: 193, 186
   orig: 193, 186
   offset: 0, 0
   index: -1
 8
   rotate: false
-  xy: 751, 210
+  xy: 751, 244
   size: 193, 186
   orig: 193, 186
   offset: 0, 0
   index: -1
 9
   rotate: false
-  xy: 784, 22
+  xy: 784, 56
   size: 193, 186
   orig: 193, 186
   offset: 0, 0
   index: -1
 board
   rotate: false
-  xy: 2, 194
+  xy: 2, 228
   size: 747, 766
   orig: 747, 766
+  offset: 0, 0
+  index: -1
+hint-dn
+  rotate: false
+  xy: 2, 2
+  size: 66, 32
+  orig: 66, 32
+  offset: 0, 0
+  index: -1
+hint-up
+  rotate: false
+  xy: 70, 2
+  size: 66, 32
+  orig: 66, 32
+  offset: 0, 0
+  index: -1
+undo-dn
+  rotate: false
+  xy: 946, 925
+  size: 56, 69
+  orig: 56, 69
+  offset: 0, 0
+  index: -1
+undo-up
+  rotate: false
+  xy: 946, 854
+  size: 56, 69
+  orig: 56, 69
   offset: 0, 0
   index: -1
 
